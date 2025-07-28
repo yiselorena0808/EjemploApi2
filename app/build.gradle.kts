@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace = "com.example.boll"
-    compileSdk = 33
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.boll"
-        minSdk = 33
-        targetSdk = 33
+        minSdk = 36
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
