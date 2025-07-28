@@ -29,17 +29,27 @@ import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
+
     private RecyclerView recyclerView;
     private PostAdapter postAdapter;
     private List<Post> postList;
     private RequestQueue requestQueue;
+
     private EditText editTextTitle;
     private EditText editTextBody;
     private Button buttonSubmit;
+
+    private EditText editTextPostId;
+    private EditText editTextNewTitle;
+    private EditText editTextNewBody;
+    private Button buttonUpdate;
+
     private TextView textViewApiResult;
 
-    private static final String API_URL1 = "https://jsonplaceholder.typicode.com/posts";
-    private static final String API_URL = "https://jsonplaceholder.typicode.com/posts";
+
+    private static final String API_URL = "https://jsonplaceholder.typicode.com/posts";//GET
+    private static final String API_URL1 = "https://jsonplaceholder.typicode.com/posts"; // POST
+    private static final String BASE_API_URL = "https://jsonplaceholder.typicode.com/posts/"; // PUT
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +60,12 @@ public class MainActivity extends AppCompatActivity {
         editTextTitle = findViewById(R.id.editTextTitle);
         editTextBody = findViewById(R.id.editTextBody);
         buttonSubmit = findViewById(R.id.buttonSubmit);
-        textViewApiResult = findViewById(R.id.textViewApiResult);
+        textViewApiResult = findViewById(R.id.textViewApiResult1);
+
+        editTextPostId = findViewById(R.id.editTextPostId);
+        editTextNewTitle = findViewById(R.id.editTextNewTitle);
+        editTextNewBody = findViewById(R.id.editTextNewBody);
+        buttonUpdate = findViewById(R.id.buttonUpdate);
 
         requestQueue = Volley.newRequestQueue(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -61,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
         fetchPost();
 
+        // POST
         buttonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -131,8 +147,25 @@ public class MainActivity extends AppCompatActivity {
                 requestQueue.add(jsonObjectRequest);
             }
         });
+
+        // PUT
+        buttonUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String postId = editTextPostId.getText().toString().trim();
+                String newTitle = editTextNewTitle.getText().toString().trim();
+                String newBody = editTextNewBody.getText().toString().trim();
+
+                if (postId.isEmpty() || newTitle.isEmpty() || newBody.isEmpty()) {
+                    Toast.makeText(MainActivity.this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show();
+                } else {
+                    updatePost(postId, newTitle, newBody);
+                }
+            }
+        });
     }
 
+    // GET
     private void fetchPost() {
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
@@ -169,5 +202,70 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
         requestQueue.add(jsonArrayRequest);
+    }
+
+    // PUT
+    private void updatePost(String postId, String newTitle, String newBody) {
+        String apiUrl = BASE_API_URL + postId;
+
+        JSONObject postData = new JSONObject();
+        try {
+            postData.put("id", Integer.parseInt(postId));
+            postData.put("title", newTitle);
+            postData.put("body", newBody);
+            postData.put("userId", 1);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.PUT,
+                apiUrl,
+                postData,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String id = response.getString("id");
+                            String responseTitle = response.getString("title");
+                            String responseBody = response.getString("body");
+                            int userId = response.getInt("userId");
+
+                            String result = "Post actualizado exitosamente:\n" +
+                                    "ID: " + id + "\n" +
+                                    "Título: " + responseTitle + "\n" +
+                                    "Cuerpo: " + responseBody + "\n" +
+                                    "UserID: " + userId;
+                            textViewApiResult.setText(result);
+                            Toast.makeText(MainActivity.this, "Post " + id + " actualizado", Toast.LENGTH_LONG).show();
+
+                            editTextPostId.setText("");
+                            editTextNewTitle.setText("");
+                            editTextNewBody.setText("");
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(MainActivity.this, "Error al parsear la respuesta JSON: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MainActivity.this, "Error al actualizar post: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        textViewApiResult.setText("Error al conectar con la API: " + error.getMessage());
+                        error.printStackTrace();
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+        };
+
+        requestQueue.add(jsonObjectRequest);
     }
 }

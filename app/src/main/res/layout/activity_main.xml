@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:id="@+id/formContainer"
+        android:id="@+id/mainContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:layout_alignParentTop="true">
+        android:padding="16dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="LOS METODOS GET, POST, PUT"
+            android:gravity="center"
+            android:textSize="25dp" />
 
         <EditText
             android:id="@+id/editTextTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Ingrese el título"
+            android:layout_marginTop="20dp"
             android:inputType="textCapSentences"
             android:minHeight="48dp" />
 
@@ -41,6 +45,44 @@
             android:layout_marginTop="24dp"
             android:text="Crear Post" />
 
+
+        <EditText
+            android:id="@+id/editTextPostId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:hint="ID del Post a Actualizar (ej. 1)"
+            android:inputType="number"
+            android:minHeight="48dp" />
+
+        <EditText
+            android:id="@+id/editTextNewTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Nuevo título"
+            android:inputType="textCapSentences"
+            android:minHeight="48dp" />
+
+        <EditText
+            android:id="@+id/editTextNewBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Nuevo cuerpo del mensaje"
+            android:inputType="textMultiLine"
+            android:lines="5"
+            android:gravity="top"
+            android:minHeight="48dp" />
+
+        <Button
+            android:id="@+id/buttonUpdate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Actualizar Post" />
+
+
         <TextView
             android:id="@+id/textViewResponse"
             android:layout_width="match_parent"
@@ -48,23 +90,26 @@
             android:layout_marginTop="24dp"
             android:text="Respuesta de la API:"
             android:textStyle="bold"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/textViewApiResult"
+            android:id="@+id/textViewApiResult1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text=""
-            android:textSize="14sp"/>
+            android:textSize="14sp" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:padding="8dp"
+            android:nestedScrollingEnabled="false"
+            android:scrollbars="vertical" />
     </LinearLayout>
+</ScrollView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/formContainer"
-        android:padding="8dp"
-        android:scrollbars="vertical" />
 
-</RelativeLayout>
